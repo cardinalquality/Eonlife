@@ -9,11 +9,45 @@ export default function HeroSection() {
   const { hero } = currentTemplate.content;
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', { name, email });
+
+    // Clear previous messages
+    setSuccessMessage('');
+    setErrorMessage('');
+    setIsLoading(true);
+
+    try {
+      // Call the API endpoint
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, name }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success
+        setSuccessMessage(`Welcome ${data.firstName}! Check your email to get started.`);
+        setEmail('');
+        setName('');
+      } else {
+        // Error from API
+        setErrorMessage(data.error || 'Failed to subscribe. Please try again.');
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      setErrorMessage('Network error. Please check your connection and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,7 +107,8 @@ export default function HeroSection() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+                  disabled={isLoading || !!successMessage}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="Enter your name"
                   required
                 />
@@ -88,17 +123,33 @@ export default function HeroSection() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+                  disabled={isLoading || !!successMessage}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="you@example.com"
                   required
                 />
               </div>
 
+              {/* Success Message */}
+              {successMessage && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-green-800 text-sm font-medium">{successMessage}</p>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {errorMessage && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-sm font-medium">{errorMessage}</p>
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-accent transition-all font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02]"
+                disabled={isLoading || !!successMessage}
+                className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-accent transition-all font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Get My ReLuma
+                {isLoading ? 'Subscribing...' : 'Get My ReLuma'}
               </button>
 
               <p className="text-xs text-gray-500 text-center">
