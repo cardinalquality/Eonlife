@@ -71,12 +71,18 @@ export default function Footer() {
             <p className="text-gray-400 text-sm">
               {footer.copyrightText}
             </p>
-            <div className="flex gap-6 text-sm text-gray-400">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm text-gray-400">
               <a href="/privacy" className="hover:text-white transition-colors">
                 Privacy Policy
               </a>
               <a href="/terms" className="hover:text-white transition-colors">
                 Terms of Service
+              </a>
+              <a href="/refund-policy" className="hover:text-white transition-colors">
+                Return & Refund Policy
+              </a>
+              <a href="/shipping-policy" className="hover:text-white transition-colors">
+                Shipping Policy
               </a>
             </div>
           </div>

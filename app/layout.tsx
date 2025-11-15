@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { CookieConsent } from "@/components/CookieConsent";
 
 const avenirNext = localFont({
   src: [
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${avenirNext.variable} font-sans antialiased`}>
         {children}
+        <CookieConsent />
       </body>
     </html>
   );
