@@ -16,9 +16,10 @@ export default function EducationSection() {
             {currentTemplate.assets.sections.section2?.images?.[0] && (
               <Image
                 src={currentTemplate.assets.sections.section2.images[0]}
-                alt="ReLuma Products"
+                alt="ReLuma Premium Skincare Products with 387 Human Growth Factors for Anti-Aging and Skin Rejuvenation"
                 fill
                 className="object-contain"
+                loading="lazy"
               />
             )}
           </div>

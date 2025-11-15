@@ -9,11 +9,25 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ScienceSection from '@/components/sections/ScienceSection';
 import BeforeAfterSection from '@/components/sections/BeforeAfterSection';
 import Footer from '@/components/sections/Footer';
+import {
+  OrganizationSchema,
+  ProductSchema,
+  FAQSchema,
+  WebsiteSchema,
+  BreadcrumbSchema,
+} from '@/components/StructuredData';
 
 export default function Home() {
   return (
     <TemplateProvider initialVariant="option1">
       <div className="min-h-screen">
+        {/* JSON-LD Structured Data for SEO */}
+        <OrganizationSchema />
+        <ProductSchema />
+        <FAQSchema />
+        <WebsiteSchema />
+        <BreadcrumbSchema />
+
         <Header />
         <main>
           <HeroSection />

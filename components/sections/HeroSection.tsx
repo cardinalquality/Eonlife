@@ -23,7 +23,7 @@ export default function HeroSection() {
         <ResponsiveImage
           desktopSrc={currentTemplate.assets.heroBackground.desktop}
           mobileSrc={currentTemplate.assets.heroBackground.mobile}
-          alt="Hero Background"
+          alt="ReLuma Premium Skincare - Radiant Youthful Skin with 387 Human Growth Factors"
           priority
           className="w-full h-full object-cover"
           desktopWidth={1920}

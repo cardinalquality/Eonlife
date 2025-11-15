@@ -27,9 +27,11 @@ export default function BeforeAfterSection() {
             <div className="absolute inset-0">
               <Image
                 src={section8.beforeImage}
-                alt="Before using ReLuma"
+                alt="Before using ReLuma skincare - skin condition before treatment with growth factors"
                 fill
                 className="object-cover"
+                loading="lazy"
+                quality={90}
               />
               <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-2 rounded-full font-semibold">
                 Before
@@ -43,9 +45,11 @@ export default function BeforeAfterSection() {
             >
               <Image
                 src={section8.afterImage}
-                alt="After using ReLuma"
+                alt="After using ReLuma skincare - visibly rejuvenated, radiant, youthful skin after growth factor treatment"
                 fill
                 className="object-cover"
+                loading="lazy"
+                quality={90}
               />
               <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-full font-semibold">
                 After
