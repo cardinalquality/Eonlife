@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Customer model represents a user in our system
+model Customer {
+  id                String      @id @default(cuid())
+  email             String      @unique
+  name              String?
+  stripeCustomerId  String?     @unique // Maps to Stripe customer ID
+
+  // Contact information
+  phone             String?
+  address           String?
+  city              String?
+  state             String?
+  zipCode           String?
+  country           String?
+
+  // Relationships
+  orders            Order[]
+  subscriptions     Subscription[]
+  paymentMethods    PaymentMethod[]
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+// Order model represents a purchase
+model Order {
+  id                String      @id @default(cuid())
+  customerId        String
+  customer          Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Order details
+  status            OrderStatus @default(PENDING)
+  items             OrderItem[]
+  totalAmount       Int         // in cents
+  currency          String      @default("usd")
+
+  // Payment information
+  stripePaymentIntentId String? @unique
+
+  // Timestamps
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  completedAt       DateTime?
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Order items (products in an order)
+model OrderItem {
+  id                String      @id @default(cuid())
+  orderId           String
+  order             Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productName       String
+  productId         String?
+  quantity          Int
+  pricePerUnit      Int         // in cents
+
+  @@index([orderId])
+}
+
+// Subscription model for recurring payments
+model Subscription {
+  id                String        @id @default(cuid())
+  customerId        String
+  customer          Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  status            SubscriptionStatus @default(ACTIVE)
+  planId            String
+  planName          String
+  amount            Int           // in cents (monthly)
+  currency          String        @default("usd")
+
+  // Stripe information
+  stripeSubscriptionId String?    @unique
+  stripeCustomerId  String
+
+  // Billing cycle
+  currentPeriodStart DateTime?
+  currentPeriodEnd  DateTime?
+  cancelledAt       DateTime?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([customerId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  PAST_DUE
+}
+
+// Payment method stored for the customer
+model PaymentMethod {
+  id                String      @id @default(cuid())
+  customerId        String
+  customer          Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  stripePaymentMethodId String  @unique
+
+  // Payment method details (normalized)
+  type              PaymentMethodType
+  last4             String?
+  brand             String?
+  expiryMonth       Int?
+  expiryYear        Int?
+
+  isDefault         Boolean     @default(false)
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([customerId])
+}
+
+enum PaymentMethodType {
+  CARD
+  APPLE_PAY
+  GOOGLE_PAY
+  BANK_ACCOUNT
+  WALLET
+}
+
+// Payment event log for audit trail and webhook handling
+model PaymentEvent {
+  id                String      @id @default(cuid())
+  stripeEventId     String      @unique
+
+  eventType         String      // e.g., "payment_intent.succeeded"
+  status            PaymentEventStatus @default(PENDING)
+
+  relatedOrderId    String?
+  relatedSubscriptionId String?
+
+  // Raw event data (for debugging)
+  eventData         Json
+
+  processedAt       DateTime?
+  createdAt         DateTime    @default(now())
+
+  @@index([eventType])
+  @@index([status])
+}
+
+enum PaymentEventStatus {
+  PENDING
+  PROCESSED
+  FAILED
+  SKIPPED
+}
