@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const avenirNext = localFont({
   src: [
@@ -35,6 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className={`${avenirNext.variable} font-sans antialiased`}>
         {children}
       </body>

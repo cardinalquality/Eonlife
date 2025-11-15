@@ -2,6 +2,7 @@
 
 import { useTemplate } from '@/lib/template-context';
 import Image from 'next/image';
+import { trackOutboundLink, trackSocialShare } from '@/lib/analytics';
 
 export default function Footer() {
   const { currentTemplate } = useTemplate();
@@ -53,6 +54,7 @@ export default function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackSocialShare(social.platform.toLowerCase(), 'footer_link')}
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                 >
                   <span className="sr-only">{social.platform}</span>

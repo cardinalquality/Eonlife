@@ -9,6 +9,7 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ScienceSection from '@/components/sections/ScienceSection';
 import BeforeAfterSection from '@/components/sections/BeforeAfterSection';
 import Footer from '@/components/sections/Footer';
+import { trackCTAClick } from '@/lib/analytics';
 
 export default function Home() {
   return (
@@ -32,7 +33,10 @@ export default function Home() {
               <p className="text-xl mb-8 text-white/90">
                 Join thousands of satisfied customers and experience the ReLuma difference
               </p>
-              <button className="px-12 py-4 bg-white text-primary rounded-full hover:bg-accent hover:text-white transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
+              <button
+                onClick={() => trackCTAClick('buy_now', 'final_cta_section')}
+                className="px-12 py-4 bg-white text-primary rounded-full hover:bg-accent hover:text-white transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
                 Buy Now
               </button>
             </div>

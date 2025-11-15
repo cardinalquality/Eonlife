@@ -3,15 +3,25 @@
 import { useState } from 'react';
 import { useTemplate } from '@/lib/template-context';
 import ResponsiveImage from '../ResponsiveImage';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function HeroSection() {
   const { currentTemplate } = useTemplate();
   const { hero } = currentTemplate.content;
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const { trackFormSubmit, trackCTAClick } = useAnalytics();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Track form submission
+    trackFormSubmit('hero_lead_form', {
+      form_location: 'hero_section',
+      has_name: !!name,
+      has_email: !!email,
+    });
+
     // Handle form submission
     console.log('Form submitted:', { name, email });
   };
@@ -45,10 +55,16 @@ export default function HeroSection() {
               {hero.subheadline}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="px-8 py-4 bg-primary text-white rounded-full hover:bg-accent transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105">
+              <button
+                onClick={() => trackCTAClick('shop_now', 'hero_section')}
+                className="px-8 py-4 bg-primary text-white rounded-full hover:bg-accent transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
                 {hero.ctaText}
               </button>
-              <button className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-full hover:bg-white/20 transition-all font-semibold text-lg border border-white/30">
+              <button
+                onClick={() => trackCTAClick('learn_more', 'hero_section')}
+                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-full hover:bg-white/20 transition-all font-semibold text-lg border border-white/30"
+              >
                 Learn More
               </button>
             </div>
