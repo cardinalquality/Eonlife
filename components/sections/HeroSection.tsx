@@ -1,89 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
+import { useFormProvider } from '@/lib/hooks/useFormProvider';
 import ResponsiveImage from '../ResponsiveImage';
-import { schemas } from '@/lib/validation';
-
-type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
 export default function HeroSection() {
-  const { currentTemplate } = useTemplate();
-  const { hero } = currentTemplate.content;
+  const { currentVariant, currentProduct } = useProduct();
+  const { hero } = currentVariant.content;
+  const { submitForm, isSubmitting, response } = useFormProvider();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [formState, setFormState] = useState<FormState>('idle');
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const validateForm = () => {
-    const newErrors: { name?: string; email?: string } = {};
-
-    // Validate name
-    const nameValidation = schemas.name.safeParse(name);
-    if (!nameValidation.success) {
-      newErrors.name = nameValidation.error.errors[0]?.message || 'Invalid name';
-    }
-
-    // Validate email
-    const emailValidation = schemas.email.safeParse(email);
-    if (!emailValidation.success) {
-      newErrors.email = emailValidation.error.errors[0]?.message || 'Invalid email address';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  if (!hero) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
+    const result = await submitForm({ name, email });
 
-    // Validate form
-    if (!validateForm()) {
-      return;
-    }
-
-    setFormState('submitting');
-
-    try {
-      // Submit to newsletter API
-      const response = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, consent: true })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to subscribe');
-      }
-
-      setFormState('success');
-      setSuccessMessage('Success! Check your email to confirm your subscription.');
-      setEmail('');
+    if (result.success) {
+      // Clear form on success
       setName('');
-      setErrors({});
-
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage('');
-        setFormState('idle');
-      }, 5000);
-    } catch (error) {
-      setFormState('error');
-      setErrorMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
-
-      // Reset error message after 5 seconds
-      setTimeout(() => {
-        setErrorMessage('');
-        setFormState('idle');
-      }, 5000);
+      setEmail('');
     }
   };
 
@@ -92,8 +32,8 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 -z-10">
         <ResponsiveImage
-          desktopSrc={currentTemplate.assets.heroBackground.desktop}
-          mobileSrc={currentTemplate.assets.heroBackground.mobile}
+          desktopSrc={currentVariant.assets.heroBackground?.desktop || ''}
+          mobileSrc={currentVariant.assets.heroBackground?.mobile || ''}
           alt="Hero Background"
           priority
           className="w-full h-full object-cover"
@@ -131,22 +71,8 @@ export default function HeroSection() {
               {hero.formTitle}
             </h2>
             <p className="text-gray-600 mb-6">
-              Join thousands experiencing radiant skin
+              {hero.description || 'Join thousands experiencing amazing results'}
             </p>
-
-            {/* Success Message */}
-            {successMessage && (
-              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-800 text-sm font-medium">{successMessage}</p>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 text-sm font-medium">{errorMessage}</p>
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -157,23 +83,11 @@ export default function HeroSection() {
                   type="text"
                   id="name"
                   value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    // Clear error when user starts typing
-                    if (errors.name) {
-                      setErrors({ ...errors, name: undefined });
-                    }
-                  }}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition ${
-                    errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                  }`}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
                   placeholder="Enter your name"
                   required
-                  disabled={formState === 'submitting'}
                 />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                )}
               </div>
 
               <div>
@@ -184,35 +98,25 @@ export default function HeroSection() {
                   type="email"
                   id="email"
                   value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    // Clear error when user starts typing
-                    if (errors.email) {
-                      setErrors({ ...errors, email: undefined });
-                    }
-                  }}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition ${
-                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                  }`}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
                   placeholder="you@example.com"
                   required
-                  disabled={formState === 'submitting'}
                 />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
               </div>
+
+              {response && (
+                <div className={`p-3 rounded-lg text-sm ${response.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {response.success ? response.message : response.error}
+                </div>
+              )}
 
               <button
                 type="submit"
-                disabled={formState === 'submitting'}
-                className={`w-full px-6 py-4 bg-primary text-white rounded-lg font-semibold text-lg shadow-md transition-all ${
-                  formState === 'submitting'
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-accent hover:shadow-lg transform hover:scale-[1.02]'
-                }`}
+                disabled={isSubmitting}
+                className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-accent transition-all font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {formState === 'submitting' ? 'Submitting...' : 'Get My ReLuma'}
+                {isSubmitting ? 'Submitting...' : hero.ctaText}
               </button>
 
               <p className="text-xs text-gray-500 text-center">
