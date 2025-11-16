@@ -1,10 +1,14 @@
 'use client';
 
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 
 export default function ScienceSection() {
-  const { currentTemplate } = useTemplate();
-  const { section7 } = currentTemplate.content;
+  const { currentVariant } = useProduct();
+  const { section7 } = currentVariant.content;
+
+  if (!section7) {
+    return null;
+  }
 
   return (
     <section id="science" className="py-20 bg-gradient-to-br from-secondary to-white">

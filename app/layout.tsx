@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { CookieConsent } from "@/components/CookieConsent";
+import { getActiveProduct } from "@/lib/product-registry";
 
 const avenirNext = localFont({
   src: [
@@ -24,10 +25,19 @@ const avenirNext = localFont({
   variable: "--font-avenir",
 });
 
-export const metadata: Metadata = {
-  title: "ReLuma - Discover Radiant, Youthful Skin",
-  description: "Powered by 387 Human Growth Factors for comprehensive skin rejuvenation",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const product = await getActiveProduct();
+  return {
+    title: product.metadata.title,
+    description: product.metadata.description,
+    keywords: product.metadata.keywords,
+    openGraph: {
+      title: product.metadata.title,
+      description: product.metadata.description,
+      images: product.metadata.ogImage ? [product.metadata.ogImage] : undefined,
+    },
+  };
+}
 
 export default function RootLayout({
   children,
