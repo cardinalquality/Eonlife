@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 
 export default function Header() {
-  const { currentTemplate } = useTemplate();
+  const { currentVariant, currentProduct } = useProduct();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -15,8 +15,8 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Image
-              src={currentTemplate.assets.logo}
-              alt="ReLuma Logo"
+              src={currentProduct.branding.logo}
+              alt={`${currentProduct.name} Logo`}
               width={120}
               height={40}
               priority
@@ -41,7 +41,7 @@ export default function Header() {
 
           {/* Social Icons & CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            {currentTemplate.content.footer.socialLinks.map((social) => (
+            {currentVariant.content.footer?.socialLinks?.map((social) => (
               <a
                 key={social.platform}
                 href={social.url}

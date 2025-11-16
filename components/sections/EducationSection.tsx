@@ -1,11 +1,15 @@
 'use client';
 
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 import Image from 'next/image';
 
 export default function EducationSection() {
-  const { currentTemplate } = useTemplate();
-  const { section2 } = currentTemplate.content;
+  const { currentVariant } = useProduct();
+  const { section2 } = currentVariant.content;
+
+  if (!section2) {
+    return null;
+  }
 
   return (
     <section id="education" className="py-20 bg-secondary">
@@ -13,10 +17,10 @@ export default function EducationSection() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left - Image */}
           <div className="relative h-[400px] md:h-[500px]">
-            {currentTemplate.assets.sections.section2?.images?.[0] && (
+            {currentVariant.assets.sections?.section2?.images?.[0] && (
               <Image
-                src={currentTemplate.assets.sections.section2.images[0]}
-                alt="ReLuma Products"
+                src={currentVariant.assets.sections.section2.images[0]}
+                alt="Products"
                 fill
                 className="object-contain"
               />
