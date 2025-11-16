@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { CartProvider } from "@/lib/cart-context";
+import { CookieConsent } from "@/components/CookieConsent";
 import { getActiveProduct } from "@/lib/product-registry";
 
 const avenirNext = localFont({
@@ -54,6 +55,7 @@ export default function RootLayout({
         <CartProvider>
           {children}
         </CartProvider>
+        <CookieConsent />
       </body>
     </html>
   );
