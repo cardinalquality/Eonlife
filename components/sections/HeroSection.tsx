@@ -1,19 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
+import { useFormProvider } from '@/lib/hooks/useFormProvider';
 import ResponsiveImage from '../ResponsiveImage';
 
 export default function HeroSection() {
-  const { currentTemplate } = useTemplate();
-  const { hero } = currentTemplate.content;
+  const { currentVariant, currentProduct } = useProduct();
+  const { hero } = currentVariant.content;
+  const { submitForm, isSubmitting, response } = useFormProvider();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  if (!hero) {
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', { name, email });
+    const result = await submitForm({ name, email });
+
+    if (result.success) {
+      // Clear form on success
+      setName('');
+      setEmail('');
+    }
   };
 
   return (
@@ -21,8 +32,8 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 -z-10">
         <ResponsiveImage
-          desktopSrc={currentTemplate.assets.heroBackground.desktop}
-          mobileSrc={currentTemplate.assets.heroBackground.mobile}
+          desktopSrc={currentVariant.assets.heroBackground?.desktop || ''}
+          mobileSrc={currentVariant.assets.heroBackground?.mobile || ''}
           alt="Hero Background"
           priority
           className="w-full h-full object-cover"
@@ -60,7 +71,7 @@ export default function HeroSection() {
               {hero.formTitle}
             </h2>
             <p className="text-gray-600 mb-6">
-              Join thousands experiencing radiant skin
+              {hero.description || 'Join thousands experiencing amazing results'}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,11 +105,18 @@ export default function HeroSection() {
                 />
               </div>
 
+              {response && (
+                <div className={`p-3 rounded-lg text-sm ${response.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {response.success ? response.message : response.error}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-accent transition-all font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02]"
+                disabled={isSubmitting}
+                className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-accent transition-all font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Get My ReLuma
+                {isSubmitting ? 'Submitting...' : hero.ctaText}
               </button>
 
               <p className="text-xs text-gray-500 text-center">

@@ -1,11 +1,15 @@
 'use client';
 
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 import Image from 'next/image';
 
 export default function Footer() {
-  const { currentTemplate } = useTemplate();
-  const { footer } = currentTemplate.content;
+  const { currentVariant, currentProduct } = useProduct();
+  const { footer } = currentVariant.content;
+
+  if (!footer) {
+    return null;
+  }
 
   return (
     <footer className="bg-gray-900 text-white py-12">
@@ -14,8 +18,8 @@ export default function Footer() {
           {/* Logo & Description */}
           <div className="md:col-span-2">
             <Image
-              src={currentTemplate.assets.logo}
-              alt="ReLuma Logo"
+              src={currentProduct.branding.logo}
+              alt={`${currentProduct.name} Logo`}
               width={120}
               height={40}
               className="mb-4 brightness-0 invert"
@@ -30,7 +34,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              {footer.links.map((link, index) => (
+              {footer.links?.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.url}
@@ -47,7 +51,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Connect With Us</h3>
             <div className="flex gap-4">
-              {footer.socialLinks.map((social, index) => (
+              {footer.socialLinks?.map((social, index) => (
                 <a
                   key={index}
                   href={social.url}
