@@ -1,10 +1,14 @@
 'use client';
 
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 
 export default function TestimonialsSection() {
-  const { currentTemplate } = useTemplate();
-  const { section5 } = currentTemplate.content;
+  const { currentVariant } = useProduct();
+  const { section5 } = currentVariant.content;
+
+  if (!section5 || !section5.testimonials) {
+    return null;
+  }
 
   return (
     <section id="testimonials" className="py-20 bg-secondary">
