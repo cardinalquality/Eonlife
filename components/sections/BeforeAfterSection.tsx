@@ -1,13 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 import Image from 'next/image';
 
 export default function BeforeAfterSection() {
-  const { currentTemplate } = useTemplate();
-  const { section8 } = currentTemplate.content;
+  const { currentVariant } = useProduct();
+  const { section8 } = currentVariant.content;
   const [sliderPosition, setSliderPosition] = useState(50);
+
+  if (!section8 || !section8.beforeImage || !section8.afterImage) {
+    return null;
+  }
 
   return (
     <section id="results" className="py-20 bg-white">
@@ -26,7 +30,7 @@ export default function BeforeAfterSection() {
             {/* Before Image */}
             <div className="absolute inset-0">
               <Image
-                src={section8.beforeImage}
+                src={section8.beforeImage!}
                 alt="Before using ReLuma"
                 fill
                 className="object-cover"
@@ -42,7 +46,7 @@ export default function BeforeAfterSection() {
               style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
             >
               <Image
-                src={section8.afterImage}
+                src={section8.afterImage!}
                 alt="After using ReLuma"
                 fill
                 className="object-cover"
