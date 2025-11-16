@@ -9,7 +9,15 @@
     "lint": "eslint",
     "prisma": "prisma",
     "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "prisma db seed",
+    "setup:dev": "sh scripts/setup-dev-db.sh",
+    "setup:staging": "sh scripts/setup-staging-db.sh",
+    "env:dev": "cp .env.development .env.local",
+    "env:staging": "cp .env.staging .env.local",
+    "env:production": "cp .env.production .env.local"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",

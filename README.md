@@ -10,6 +10,42 @@ A modern, responsive landing page built with Next.js 16, TypeScript, and Tailwin
 - **Custom Fonts**: Avenir Next LT Pro for premium typography
 - **Reusable Components**: Modular section components for maximum flexibility
 - **Interactive Elements**: Before/After slider, mobile menu, smooth animations
+- **E-commerce Integration**: Stripe payments, customer management, subscriptions
+- **Multi-Environment Support**: Development, staging, and production environments
+
+## 🌍 Environment Setup
+
+This project supports three environments: **Development**, **Staging**, and **Production**.
+
+### Quick Start (Development)
+
+```bash
+# Install dependencies
+npm install
+
+# Set up local database and environment
+npm run setup:dev
+
+# Start development server
+npm run dev
+```
+
+### Documentation
+
+- **[Quick Start Guide](docs/QUICK_START.md)** - Get up and running quickly
+- **[Environment Guide](docs/ENVIRONMENTS.md)** - Complete environment setup and deployment guide
+
+### Available Scripts
+
+```bash
+npm run dev              # Start development server
+npm run build            # Build for production
+npm run setup:dev        # Set up development database
+npm run setup:staging    # Set up staging database
+npm run db:studio        # Open database GUI
+npm run env:dev          # Copy dev environment template
+npm run env:staging      # Copy staging environment template
+```
 
 ## 📁 Project Structure
 
