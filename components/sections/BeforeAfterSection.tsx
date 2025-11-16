@@ -34,6 +34,8 @@ export default function BeforeAfterSection() {
                 alt="Before using ReLuma"
                 fill
                 className="object-cover"
+                loading="lazy"
+                quality={90}
               />
               <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-2 rounded-full font-semibold">
                 Before
@@ -50,6 +52,8 @@ export default function BeforeAfterSection() {
                 alt="After using ReLuma"
                 fill
                 className="object-cover"
+                loading="lazy"
+                quality={90}
               />
               <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-full font-semibold">
                 After

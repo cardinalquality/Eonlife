@@ -1,77 +1,83 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Security headers configuration
+  // Image optimization configuration
+  images: {
+    formats: ['image/avif', 'image/webp'], // Modern image formats for better compression
+    deviceSizes: [375, 768, 1024, 1440, 1920], // Responsive breakpoints
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Icon and thumbnail sizes
+    minimumCacheTTL: 31536000, // 1 year cache for optimized images
+    dangerouslyAllowSVG: true, // Allow SVG images (for icons)
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+
+  // Enable compression
+  compress: true,
+
+  // Production optimizations
+  poweredByHeader: false, // Remove X-Powered-By header for security
+
+  // Custom headers for caching and performance
   async headers() {
     return [
+      // Cache static assets aggressively
       {
-        // Apply these headers to all routes
+        source: '/assets/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Cache fonts
+      {
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Security headers
+      {
         source: '/:path*',
         headers: [
           {
             key: 'X-DNS-Prefetch-Control',
-            value: 'on'
+            value: 'on',
           },
           {
-            // HSTS: Enforce HTTPS for 2 years
             key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
+            value: 'max-age=63072000; includeSubDomains; preload',
           },
           {
-            // Prevent clickjacking attacks
             key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
+            value: 'SAMEORIGIN',
           },
           {
-            // Prevent MIME type sniffing
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
-            // Enable XSS filter in older browsers
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '1; mode=block',
           },
           {
-            // Control referrer information
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'origin-when-cross-origin',
           },
-          {
-            // Restrict browser features
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
-          },
-          {
-            // Content Security Policy
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Next.js requires unsafe-inline/eval in dev
-              "style-src 'self' 'unsafe-inline'", // Tailwind requires unsafe-inline
-              "img-src 'self' data: blob: https:",
-              "font-src 'self' data:",
-              "connect-src 'self'",
-              "frame-ancestors 'self'",
-              "base-uri 'self'",
-              "form-action 'self'"
-            ].join('; ')
-          }
-        ]
-      }
+        ],
+      },
     ];
   },
 
-  // Production optimizations
-  poweredByHeader: false, // Remove X-Powered-By header
-  compress: true,
-
-  // Image optimization security
-  images: {
-    remotePatterns: [], // Restrict remote image sources
-    dangerouslyAllowSVG: false, // Prevent SVG XSS attacks
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
-  }
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['react-icons', 'lucide-react'], // Optimize icon imports
+  },
 };
 
 export default nextConfig;

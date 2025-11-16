@@ -4,6 +4,7 @@ import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { CartProvider } from "@/lib/cart-context";
 import { CookieConsent } from "@/components/CookieConsent";
+import { WebVitals } from "@/components/WebVitals";
 import { getActiveProduct } from "@/lib/product-registry";
 
 const avenirNext = localFont({
@@ -52,6 +53,7 @@ export default function RootLayout({
         <GoogleAnalytics />
       </head>
       <body className={`${avenirNext.variable} font-sans antialiased`}>
+        <WebVitals />
         <CartProvider>
           {children}
         </CartProvider>

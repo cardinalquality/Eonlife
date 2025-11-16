@@ -23,6 +23,7 @@ export default function EducationSection() {
                 alt="Products"
                 fill
                 className="object-contain"
+                loading="lazy"
               />
             )}
           </div>
