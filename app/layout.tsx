@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { CartProvider } from "@/lib/cart-context";
 import { getActiveProduct } from "@/lib/product-registry";
 
 const avenirNext = localFont({
@@ -50,7 +51,9 @@ export default function RootLayout({
         <GoogleAnalytics />
       </head>
       <body className={`${avenirNext.variable} font-sans antialiased`}>
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
   );

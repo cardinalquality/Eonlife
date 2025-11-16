@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useProduct } from '@/lib/product-context';
+import ShoppingCart from '@/components/ShoppingCart';
 
 export default function Header() {
   const { currentVariant, currentProduct } = useProduct();
@@ -13,7 +15,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <Link href="/" className="flex-shrink-0">
             <Image
               src={currentProduct.branding.logo}
               alt={`${currentProduct.name} Logo`}
@@ -21,25 +23,28 @@ export default function Header() {
               height={40}
               priority
             />
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#benefits" className="text-foreground hover:text-primary transition-colors">
+            <Link href="/products" className="text-foreground hover:text-primary transition-colors">
+              Shop
+            </Link>
+            <a href="/#benefits" className="text-foreground hover:text-primary transition-colors">
               Benefits
             </a>
-            <a href="#science" className="text-foreground hover:text-primary transition-colors">
+            <a href="/#science" className="text-foreground hover:text-primary transition-colors">
               Science
             </a>
-            <a href="#testimonials" className="text-foreground hover:text-primary transition-colors">
+            <a href="/#testimonials" className="text-foreground hover:text-primary transition-colors">
               Testimonials
             </a>
-            <a href="#results" className="text-foreground hover:text-primary transition-colors">
+            <a href="/#results" className="text-foreground hover:text-primary transition-colors">
               Results
             </a>
           </nav>
 
-          {/* Social Icons & CTA */}
+          {/* Social Icons, Cart & CTA */}
           <div className="hidden md:flex items-center space-x-4">
             {currentVariant.content.footer?.socialLinks?.map((social) => (
               <a
@@ -58,27 +63,34 @@ export default function Header() {
                 </div>
               </a>
             ))}
-            <button className="ml-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-accent transition-colors font-semibold">
-              Buy Now
-            </button>
+            <ShoppingCart />
+            <Link
+              href="/products"
+              className="ml-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-accent transition-colors font-semibold"
+            >
+              Shop Now
+            </Link>
           </div>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-md text-foreground hover:text-primary"
-          >
-            <span className="sr-only">Open menu</span>
-            {mobileMenuOpen ? (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <ShoppingCart />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-md text-foreground hover:text-primary"
+            >
+              <span className="sr-only">Open menu</span>
+              {mobileMenuOpen ? (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -86,37 +98,48 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <div className="px-4 pt-2 pb-4 space-y-2">
+            <Link
+              href="/products"
+              className="block px-3 py-2 text-foreground hover:bg-secondary rounded-md"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Shop
+            </Link>
             <a
-              href="#benefits"
+              href="/#benefits"
               className="block px-3 py-2 text-foreground hover:bg-secondary rounded-md"
               onClick={() => setMobileMenuOpen(false)}
             >
               Benefits
             </a>
             <a
-              href="#science"
+              href="/#science"
               className="block px-3 py-2 text-foreground hover:bg-secondary rounded-md"
               onClick={() => setMobileMenuOpen(false)}
             >
               Science
             </a>
             <a
-              href="#testimonials"
+              href="/#testimonials"
               className="block px-3 py-2 text-foreground hover:bg-secondary rounded-md"
               onClick={() => setMobileMenuOpen(false)}
             >
               Testimonials
             </a>
             <a
-              href="#results"
+              href="/#results"
               className="block px-3 py-2 text-foreground hover:bg-secondary rounded-md"
               onClick={() => setMobileMenuOpen(false)}
             >
               Results
             </a>
-            <button className="w-full mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-accent transition-colors font-semibold">
-              Buy Now
-            </button>
+            <Link
+              href="/products"
+              className="block w-full mt-4 px-6 py-2 bg-primary text-white text-center rounded-full hover:bg-accent transition-colors font-semibold"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Shop Now
+            </Link>
           </div>
         </div>
       )}
