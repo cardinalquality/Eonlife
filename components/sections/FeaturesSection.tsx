@@ -1,10 +1,14 @@
 'use client';
 
-import { useTemplate } from '@/lib/template-context';
+import { useProduct } from '@/lib/product-context';
 
 export default function FeaturesSection() {
-  const { currentTemplate } = useTemplate();
-  const { section3 } = currentTemplate.content;
+  const { currentVariant } = useProduct();
+  const { section3 } = currentVariant.content;
+
+  if (!section3 || !section3.features) {
+    return null;
+  }
 
   return (
     <section id="benefits" className="py-20 bg-white">
