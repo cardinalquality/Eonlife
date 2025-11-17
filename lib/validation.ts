@@ -190,7 +190,9 @@ export function validateInput<T>(
 export function formatValidationErrors(error: z.ZodError): Record<string, string> {
   const formatted: Record<string, string> = {};
 
-  error.errors.forEach((err) => {
+  // Zod v4 uses 'issues' instead of 'errors'
+  const issues = (error as any).issues || (error as any).errors || [];
+  issues.forEach((err: any) => {
     const path = err.path.join('.');
     formatted[path] = err.message;
   });
